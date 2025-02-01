@@ -8,3 +8,4 @@ class User(Document):
     signed_days: int
     favorability: int
     last_signed: datetime
+    qq_number: str = ""

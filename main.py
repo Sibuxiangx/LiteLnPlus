@@ -2,7 +2,8 @@ from beanie import Document, init_beanie
 from cocotst.app import Cocotst, GroupMessage, C2CMessage
 from cocotst.app import ApplicationReady
 from cocotst.message.parser.base import QCommandMatcher
-from cocotst.network.model import Content, Target
+from cocotst.network.model.target import Target
+from cocotst.network.model.webhook import Content
 from graia.saya.builtins.broadcast import BroadcastBehaviour
 from graia.saya import Saya
 from creart import it
@@ -54,6 +55,10 @@ with saya.module_context():
     saya.require("module.login")
     # saya.require("module.aichat")
     saya.require("module.desity")
+    saya.require("module.rank")
+    saya.require("module.bind")
+    saya.require("module.b50")
+    saya.require("module.ttgame")
 
 kayaku.save_all()
 

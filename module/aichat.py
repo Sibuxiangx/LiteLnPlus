@@ -5,7 +5,9 @@ from module_services.aichat import AichatS
 
 from cocotst.app import Cocotst
 from cocotst.event.message import GroupMessage, C2CMessage
-from cocotst.network.model import Target, Member, Content
+from cocotst.network.model.target import Target
+from cocotst.network.model.event_element.normal import Member
+from cocotst.network.model.webhook import Content
 from graia.saya.builtins.broadcast.shortcut import listen
 from kayaku import create
 from config_model.llm import LLM

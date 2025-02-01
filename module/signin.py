@@ -7,7 +7,8 @@ import random
 from io import BytesIO
 import asyncio
 from cocotst.event.message import GroupMessage,C2CMessage
-from cocotst.network.model import   Target, Member
+from cocotst.network.model.target import Target
+from cocotst.network.model.event_element.normal import Member
 from cocotst.message.parser.base import QCommandMatcher
 from cocotst.message.element import Image
 from graia.saya.builtins.broadcast.shortcut import listen, decorate

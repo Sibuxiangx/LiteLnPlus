@@ -1,8 +1,10 @@
 from cocotst.app import Cocotst
 from database.model import User
 from datetime import datetime
-from cocotst.event.message import GroupMessage,C2CMessage
-from cocotst.network.model import Target, Member, Content
+from cocotst.event.message import GroupMessage, C2CMessage
+from cocotst.network.model.target import Target
+from cocotst.network.model.event_element.normal import Member
+from cocotst.network.model.webhook import Content
 from cocotst.message.parser.base import QCommandMatcher
 from graia.saya.builtins.broadcast.shortcut import listen
 from toolkit.textsafe import verify_nickname
@@ -18,18 +20,45 @@ async def catch(
 ):
     nickname = content.content
     uuid = member.member_openid
-    if await User.find_one(User.uid == uuid):
+
+    # 检查是否已注册，如果已注册则进行改名流程
+    if user := await User.find_one(User.uid == uuid):
+        # 检查好感度是否足够
+        if user.favorability < 50:
+            await app.send_group_message(
+                target,
+                content="你的好感度不足50，无法更改名字！",
+            )
+            return
+
+        result = await verify_nickname(nickname)
+        if not result.verified:
+            await app.send_group_message(
+                target,
+                content=f"改名失败，{result.msg}",
+            )
+            return
+
+        # 扣除好感度并更新名字
+        old_name = user.name
+        user.name = nickname
+        user.favorability -= 50
+        await user.save()
+
         await app.send_group_message(
             target,
-            content="你好，你似乎已经注册过了哦！",
+            content=f"改名成功！\n原名字：{old_name}\n新名字：{nickname}\n扣除50好感度",
         )
         return
+
     if not nickname:
         await app.send_group_message(
             target,
             content="你好，你似乎没有输入名字哦！",
         )
         return
+
+    # 游客模式注册
     if user := await User.find_one(User.uid == "GUESTMODE_" + uuid):
         result = await verify_nickname(nickname)
         if not result.verified:
@@ -46,6 +75,8 @@ async def catch(
         user.uid = uuid
         await user.save()
         return
+
+    # 新用户注册
     result = await verify_nickname(nickname)
     if result.verified:
         await app.send_group_message(
@@ -66,6 +97,7 @@ async def catch(
             content=f"注册失败，{result.msg}",
         )
 
+
 @listen(C2CMessage)
 async def catch(
     app: Cocotst,
@@ -74,18 +106,45 @@ async def catch(
 ):
     nickname = content.content
     uuid = target.target_unit
-    if await User.find_one(User.uid == uuid):
+
+    # 检查是否已注册，如果已注册则进行改名流程
+    if user := await User.find_one(User.uid == uuid):
+        # 检查好感度是否足够
+        if user.favorability < 50:
+            await app.send_c2c_message(
+                target,
+                content="你的好感度不足50，无法更改名字！",
+            )
+            return
+
+        result = await verify_nickname(nickname)
+        if not result.verified:
+            await app.send_c2c_message(
+                target,
+                content=f"改名失败，{result.msg}",
+            )
+            return
+
+        # 扣除好感度并更新名字
+        old_name = user.name
+        user.name = nickname
+        user.favorability -= 50
+        await user.save()
+
         await app.send_c2c_message(
             target,
-            content="你好，你似乎已经注册过了哦！",
+            content=f"改名成功！\n原名字：{old_name}\n新名字：{nickname}\n扣除50好感度",
         )
         return
+
     if not nickname:
         await app.send_c2c_message(
             target,
             content="你好，你似乎没有输入名字哦！",
         )
         return
+
+    # 游客模式注册
     if user := await User.find_one(User.uid == "GUESTMODE_" + uuid):
         result = await verify_nickname(nickname)
         if not result.verified:
@@ -102,6 +161,8 @@ async def catch(
         user.uid = uuid
         await user.save()
         return
+
+    # 新用户注册
     result = await verify_nickname(nickname)
     if result.verified:
         await app.send_c2c_message(

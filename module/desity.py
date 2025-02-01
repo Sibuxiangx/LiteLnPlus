@@ -2,7 +2,8 @@ from cocotst.app import Cocotst
 from openai import AsyncOpenAI
 from datetime import datetime
 from cocotst.event.message import GroupMessage, C2CMessage
-from cocotst.network.model import   Target, Member
+from cocotst.network.model.target import Target
+from cocotst.network.model.event_element.normal import Member
 from cocotst.message.parser.base import QCommandMatcher
 from graia.saya.builtins.broadcast.shortcut import listen, decorate
 from pathlib import Path

@@ -6,13 +6,16 @@ authors = [
     {name = "Sibuxiangx", email = "sibuxiang@proton.me"},
 ]
 dependencies = [
-    "cocotst>=0.0.5",
+    "cocotst>=0.0.12",
     "ujson>=5.10.0",
     "kayaku>=0.5.4",
     "aiowebdav>=0.1.0rc5",
     "beanie>=1.27.0",
     "alibabacloud-green20220302>=2.18.0",
     "openai>=1.56.0",
+    "pillow>=11.1.0",
+    "graia-saya>=0.0.20",
+    "emoji>=2.14.1",
 ]
 requires-python = "==3.12.*"
 readme = "README.md"
